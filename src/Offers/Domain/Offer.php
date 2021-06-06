@@ -3,10 +3,8 @@
 
 namespace App\Offers\Domain;
 
-use App\Applicants\Domain\Applicant;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\UniqueConstraint;
 
 /**
@@ -20,7 +18,6 @@ use Doctrine\ORM\Mapping\UniqueConstraint;
 class Offer
 {
     PRIVATE CONST EMISSION_TIME = 30;
-    PRIVATE CONST DATE_FORMAT = 'Y-m-d';
 
     /**
      * @ORM\Id
@@ -149,6 +146,21 @@ class Offer
 
     public function getEnd(): \DateTime {
         return $this->end;
+    }
+
+    public function prolongation() {
+        $end = clone $this->end;
+        $end->add(new \DateInterval('P'.self::EMISSION_TIME.'D'));
+        $this->end = $end;
+    }
+
+    public function hasEnded()
+    {
+        $dateFormat = 'Y-m-d';
+        $date = clone $this->end;
+        $date->add(new \DateInterval('P'.self::EMISSION_TIME.'D'));
+        $today = new \DateTime();
+        return $date->format($dateFormat) <= $today->format($dateFormat);
     }
 
 }

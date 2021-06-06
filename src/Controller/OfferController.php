@@ -8,6 +8,7 @@ use App\Core\Application\CQRS\CommandBusInterface;
 use App\Core\Infrastructure\CQRS\QueryBusInterface;
 use App\Offers\Application\Command\AddOfferCommand;
 use App\Offers\Application\Command\ApplyToOfferCommand;
+use App\Offers\Application\Command\ProlongationCommand;
 use App\Offers\Infrastructure\Query\ShowOffersQuery;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -93,6 +94,26 @@ class OfferController extends AbstractController
         $response = $this->queryBus->handle($query);
 
         return new JsonResponse(json_decode($response), JsonResponse::HTTP_OK);
+    }
+
+
+
+    /**
+     * @Route("/prolongation", methods="POST")
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function prolongation(Request $request): JsonResponse
+    {
+        $content = json_decode($request->getContent(), TRUE);
+
+        $offerId = $content['offer_id'];
+        $command = new ProlongationCommand($offerId);
+        $this->commandBus->dispatch($command);
+
+        return new JsonResponse([
+            'status' => 'Prolongation performed.',
+        ], JsonResponse::HTTP_OK);
     }
 
 }

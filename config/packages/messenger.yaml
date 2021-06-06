@@ -25,4 +25,5 @@ framework:
             'App\Applicants\Infrastructure\Query\ShowApplicantsQuery': sync
             'App\Offers\Application\Command\AddOfferCommand': sync
             'App\Offers\Application\Command\ApplyToOfferCommand': sync
+            'App\Offers\Application\Command\ProlongationCommand': sync
             'App\Offers\Infrastructure\Query\ShowOffersQuery': sync

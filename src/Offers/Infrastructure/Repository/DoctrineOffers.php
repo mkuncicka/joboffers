@@ -49,4 +49,18 @@ class DoctrineOffers implements Offers
             ->setParameter('title', $title);
         return $qb->getQuery()->getResult();
     }
+
+    public function getOfferIdsToAnonymization(): array
+    {
+        $today = new \DateTime();
+        $interval = new \DateInterval('P30D');
+        $lastEndDateToPerformAnonymization = $today->sub($interval);
+        $qb = $this->em->createQueryBuilder();
+        $qb->addSelect('o.id')
+            ->from(Offer::class, 'o')
+            ->where('o.end < :end')
+            ->setParameter('end', $lastEndDateToPerformAnonymization);
+        $ids = $qb->getQuery()->getArrayResult();
+        return array_map(function($item) {return $item['id'];}, $ids);
+    }
 }

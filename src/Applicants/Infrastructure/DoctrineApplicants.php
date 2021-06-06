@@ -39,6 +39,7 @@ class DoctrineApplicants implements Applicants
         $qb->addSelect('a')
             ->from(Applicant::class, 'a')
             ->where('a.offer = :offer_id')
+            ->andWhere('a.anonymized = 0')
             ->setParameter('offer_id', $offerId);
 
         return $qb->getQuery()->getResult();
@@ -47,5 +48,22 @@ class DoctrineApplicants implements Applicants
     public function add(Applicant $applicant): void
     {
         $this->em->persist($applicant);
+    }
+
+    public function getForAnonymization(array $offerIds): array
+    {
+        $qb = $this->em->createQueryBuilder();
+        $qb->addSelect('a')
+            ->from(Applicant::class, 'a')
+            ->where('a.offer IN (:offer_ids)')
+            ->setParameter('offer_ids', $offerIds)
+        ;
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function flush()
+    {
+        $this->em->flush();
     }
 }

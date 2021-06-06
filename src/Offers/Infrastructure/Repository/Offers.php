@@ -11,4 +11,5 @@ interface Offers
     public function findByCompanyAndTitle(string $companyName, string $title): ?Offer;
     public function add(Offer $offer): void;
     public function search(string $title): array;
+    public function getOfferIdsToAnonymization(): array;
 }

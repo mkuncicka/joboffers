@@ -30,3 +30,23 @@ services:
         App\Core\Infrastructure\CQRS\QueryHandlerInterface:
             tags:
                 - { name: messenger.message_handler, bus: query.bus }
+
+    email_generator:
+        class: App\Applicants\Application\Service\EmailGenerator
+    name_generator:
+        class: App\Applicants\Application\Service\NameGenerator
+    offers:
+        class: App\Offers\Infrastructure\Repository\DoctrineOffers
+        arguments:
+            - '@doctrine.orm.entity_manager'
+    applicants:
+        class: App\Applicants\Infrastructure\DoctrineApplicants
+        arguments:
+            - '@doctrine.orm.entity_manager'
+
+    App\Applicants\Application\Service\Anonymizer:
+        arguments:
+            $offers: '@offers'
+            $applicants: '@applicants'
+            $emailGenerator: '@email_generator'
+            $nameGenerator: '@name_generator'
